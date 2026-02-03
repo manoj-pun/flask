@@ -11,7 +11,7 @@ from flask_login import login_user, current_user, logout_user, login_required
 @app.route("/home")
 def home():
     page = request.args.get("page",1,type=int)
-    posts = Post.query.paginate(page=page, per_page=2)
+    posts = db.paginate(Post.query.order_by(Post.date_posted.desc()),page=page,per_page=2)
     return render_template("home.html", posts=posts)
 
 @app.route("/about")
@@ -145,3 +145,10 @@ def delete_post(post_id):
     db.session.commit()
     flash("Your post has been deleted!","success")
     return redirect(url_for("home"))
+
+# @app.route("/user/<str:username>")
+# def user_posts(username):
+#     page = request.args.get("page",1,type=int)
+#     user = User.query.filter_by(username=username).first_or_404()
+#     posts = db.paginate(Post.query.filter_by(author=user),Post.query.order_by(Post.date_posted.desc()),page=page,per_page=2)
+#     return render_template("user_posts.html", posts=posts, user=user)
